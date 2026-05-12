@@ -1,3 +1,6 @@
+# this is the server
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI, UploadFile, File, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 import torch
@@ -14,7 +17,7 @@ import requests
 import slowfast_test as slowfast
 import swin_test as swin
 import r3d_test as r3d
-
+from huggingface_hub import hf_hub_download
 # Torchvision imports
 import torchvision.models.video as video_models
 from torchvision.models.video import swin3d_t
@@ -26,8 +29,8 @@ except ImportError:
     from pytorchvideo.models.hub import slowfast_r50
 
 # --- DATABASE CONFIG ---
-SUPABASE_URL = "https://xcfwqqgmhluihnmmamxk.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjZndxcWdtaGx1aWhubW1hbXhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MTEyMzksImV4cCI6MjA5MTA4NzIzOX0.MX85uXqHjgvPZuaxBKnHRjwywt1LG4tXQZ-ro0oGjOI"
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
@@ -180,13 +183,14 @@ class SwinModel(nn.Module):
 # --- 2. GLOBAL SETTINGS & LOADING ---
 
 models = {}
-
+HF_REPO = os.getenv("HF_REPO_ID") 
 def load_all_models():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     # Load SlowFast
     sf = SlowFastModel().to(device)
-    ckpt_sf = torch.load('slowfast_r3_best.pth', map_location=device, weights_only=False)
+    # ckpt_sf = torch.load('slowfast_r3_best.pth', map_location=device, weights_only=False)
+    ckpt_sf = torch.load(hf_hub_download(repo_id=HF_REPO, filename="slowfast_r3_best.pth"), map_location=device, weights_only=False)
     state_dict_sf = ckpt_sf['model_state_dict']
     new_state_dict_sf = {k.replace("module.", ""): v for k, v in state_dict_sf.items()}
     sf.load_state_dict(new_state_dict_sf, strict=False)
@@ -195,7 +199,8 @@ def load_all_models():
     
     # Load R3D
     r3d_m = R3DModel().to(device)
-    ckpt_r3d = torch.load('checkpoint_best.pth', map_location=device, weights_only=False)
+    # ckpt_r3d = torch.load('checkpoint_best.pth', map_location=device, weights_only=False)
+    ckpt_r3d = torch.load(hf_hub_download(repo_id=HF_REPO, filename="checkpoint_best.pth"), map_location=device, weights_only=False)
     state_dict_r3d = ckpt_r3d['model_state_dict'] if 'model_state_dict' in ckpt_r3d else ckpt_r3d
     r3d_m.load_state_dict(state_dict_r3d)
     r3d_m.eval()
@@ -203,7 +208,8 @@ def load_all_models():
     
     # Load Swin
     sw = SwinModel().to(device)
-    ckpt_sw = torch.load('swin_scratch_best_balanced.pth', map_location=device, weights_only=False)
+    # ckpt_sw = torch.load('swin_scratch_best_balanced.pth', map_location=device, weights_only=False)
+    ckpt_sw = torch.load(hf_hub_download(repo_id=HF_REPO, filename="swin_scratch_best_balanced.pth"), map_location=device, weights_only=False)
     state_dict_sw = ckpt_sw['model_state_dict']
     new_state_dict_sw = {k.replace("module.", ""): v for k, v in state_dict_sw.items()}
     sw.load_state_dict(new_state_dict_sw)
@@ -344,7 +350,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -395,7 +401,10 @@ def on_mqtt_message(client, userdata, message):
 
 mqtt_client = mqtt.Client()
 mqtt_client.on_message = on_mqtt_message
-mqtt_client.connect("localhost", 1883, 60)
+# mqtt_client.connect("localhost", 1883, 60)
+mqtt_client.tls_set()
+mqtt_client.username_pw_set(os.getenv("MQTT_USER"), os.getenv("MQTT_PASS"))
+mqtt_client.connect(os.getenv("MQTT_HOST"), 8883, 60)
 mqtt_client.subscribe("accident/detection")
 mqtt_client.loop_start()
 

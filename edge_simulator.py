@@ -1,3 +1,4 @@
+# this is the edge simulator file
 import cv2
 import torch
 import torch.nn as nn
@@ -10,16 +11,19 @@ from torchvision import transforms
 import torchvision.models.video as video_models
 
 # --- CONFIG ---
-MQTT_BROKER = "localhost"
-MQTT_PORT = 1883
+# MQTT_BROKER = "localhost"
+# MQTT_PORT = 1883
 MQTT_TOPIC = "accident/detection"
-VIDEO_PATH = r"../frontend/test_videos\no_accident.mp4"
+VIDEO_PATH = r"../frontend/test_videos\major.mp4"
 MODEL_PATH = "checkpoint_best.pth"
 CLIP_LENGTH = 16
 INFERENCE_EVERY = 16
 CONFIDENCE_THRESHOLD = 0.40
-
 SEVERITY_CLASSES = ['no_accident', 'minor', 'moderate', 'major']
+MQTT_BROKER = "xxxxx.s2.eu.hivemq.cloud"
+MQTT_PORT = 8883
+MQTT_USER = "your_hivemq_user"
+MQTT_PASS = "your_hivemq_pass"
 
 # --- MODEL ---
 class R3DModel(nn.Module):
@@ -100,9 +104,13 @@ def publish(client, severity, confidence, is_accident, frame):
 
 # --- MAIN LOOP ---
 def main():
+    # client = mqtt.Client()
+    # client.connect(MQTT_BROKER, MQTT_PORT, 60)
+    # client.loop_start()
     client = mqtt.Client()
+    client.username_pw_set(MQTT_USER, MQTT_PASS)
+    client.tls_set()
     client.connect(MQTT_BROKER, MQTT_PORT, 60)
-    client.loop_start()
 
     model, device = load_model(MODEL_PATH)
 
