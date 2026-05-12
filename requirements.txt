@@ -19,3 +19,5 @@ fvcore==0.1.5.post20221221
 iopath==0.1.10
 yacs==0.1.8
 requests==2.32.0
+python-dateutil==2.9.0.post0
+av==14.0.0
