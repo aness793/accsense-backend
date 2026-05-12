@@ -1,7 +1,7 @@
 fastapi==0.115.0
 uvicorn==0.30.0
-torch==2.9.0
-torchvision==0.24.0
+torch==2.3.1
+torchvision==0.18.1
 opencv-python-headless==4.10.0.84
 paho-mqtt==2.1.0
 supabase==2.3.0
@@ -19,5 +19,3 @@ fvcore==0.1.5.post20221221
 iopath==0.1.10
 yacs==0.1.8
 requests==2.32.0
-python-dateutil==2.9.0.post0
-av==14.0.0
