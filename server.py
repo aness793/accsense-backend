@@ -184,13 +184,14 @@ class SwinModel(nn.Module):
 
 models = {}
 HF_REPO = os.getenv("HF_REPO_ID") 
+HF_TOKEN = os.getenv("HF_TOKEN") 
 def load_all_models():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     # Load SlowFast
     sf = SlowFastModel().to(device)
     # ckpt_sf = torch.load('slowfast_r3_best.pth', map_location=device, weights_only=False)
-    ckpt_sf = torch.load(hf_hub_download(repo_id=HF_REPO, filename="slowfast_r3_best.pth"), map_location=device, weights_only=False)
+    ckpt_sf = torch.load(hf_hub_download(repo_id=HF_REPO, filename="slowfast_r3_best.pth", token=HF_TOKEN),map_location=device, weights_only=False)
     state_dict_sf = ckpt_sf['model_state_dict']
     new_state_dict_sf = {k.replace("module.", ""): v for k, v in state_dict_sf.items()}
     sf.load_state_dict(new_state_dict_sf, strict=False)
@@ -200,7 +201,7 @@ def load_all_models():
     # Load R3D
     r3d_m = R3DModel().to(device)
     # ckpt_r3d = torch.load('checkpoint_best.pth', map_location=device, weights_only=False)
-    ckpt_r3d = torch.load(hf_hub_download(repo_id=HF_REPO, filename="checkpoint_best.pth"), map_location=device, weights_only=False)
+    ckpt_r3d = torch.load(hf_hub_download(repo_id=HF_REPO, filename="checkpoint_best.pth", token=HF_TOKEN), map_location=device, weights_only=False)
     state_dict_r3d = ckpt_r3d['model_state_dict'] if 'model_state_dict' in ckpt_r3d else ckpt_r3d
     r3d_m.load_state_dict(state_dict_r3d)
     r3d_m.eval()
@@ -209,7 +210,7 @@ def load_all_models():
     # Load Swin
     sw = SwinModel().to(device)
     # ckpt_sw = torch.load('swin_scratch_best_balanced.pth', map_location=device, weights_only=False)
-    ckpt_sw = torch.load(hf_hub_download(repo_id=HF_REPO, filename="swin_scratch_best_balanced.pth"), map_location=device, weights_only=False)
+    ckpt_sw = torch.load(hf_hub_download(repo_id=HF_REPO, filename="swin_scratch_best_balanced.pth", token=HF_TOKEN), map_location=device, weights_only=False)
     state_dict_sw = ckpt_sw['model_state_dict']
     new_state_dict_sw = {k.replace("module.", ""): v for k, v in state_dict_sw.items()}
     sw.load_state_dict(new_state_dict_sw)
