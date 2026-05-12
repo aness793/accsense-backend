@@ -13,7 +13,7 @@ import torchvision.models.video as video_models
 MQTT_BROKER = "localhost"
 MQTT_PORT = 1883
 MQTT_TOPIC = "accident/detection"
-VIDEO_PATH = r"../test_videos\no_accident.mp4"
+VIDEO_PATH = r"../frontend/test_videos\no_accident.mp4"
 MODEL_PATH = "checkpoint_best.pth"
 CLIP_LENGTH = 16
 INFERENCE_EVERY = 16
