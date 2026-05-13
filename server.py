@@ -449,7 +449,9 @@ async def startup_event():
     global device, loop
     loop = asyncio.get_event_loop()
     # device = load_all_models()
-
+@app.get("/")
+async def root():
+    return {"status": "ok"}
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
