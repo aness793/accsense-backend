@@ -219,7 +219,7 @@ HF_TOKEN = os.getenv("HF_TOKEN")
     
 #     print(f"All models loaded successfully on {device}!")
 #     return device
-def load_all_models():
+def load_all_models(model_name):
     if model_name not in models:
         HF_REPO = os.getenv("HF_REPO_ID")
     
@@ -448,7 +448,7 @@ loop = None
 async def startup_event():
     global device, loop
     loop = asyncio.get_event_loop()
-    device = load_all_models()
+    # device = load_all_models()
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
