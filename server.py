@@ -181,7 +181,7 @@ class SwinModel(nn.Module):
         }
 
 # --- 2. GLOBAL SETTINGS & LOADING ---
-
+device = torch.device('cpu')
 models = {}
 HF_REPO = os.getenv("HF_REPO_ID") 
 HF_TOKEN = os.getenv("HF_TOKEN") 
