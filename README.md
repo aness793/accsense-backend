@@ -1,6 +1,6 @@
-# AccSense Backend
+# AcciSense Backend
 
-FastAPI backend for AccSense — an automatic road accident detection and severity estimation system using deep learning on surveillance video.
+FastAPI backend for AcciSense — an automatic road accident detection and severity estimation system using deep learning on surveillance video.
 
 ## Overview
 
@@ -23,7 +23,7 @@ This backend exposes a REST API and WebSocket server that:
 ## Project Structure
 
 ```
-accsense-backend/
+AcciSense-backend/
 ├── server.py           # Main FastAPI app
 ├── r3d_test.py         # R3D-18 preprocessing
 ├── slowfast_test.py    # SlowFast preprocessing
@@ -42,7 +42,7 @@ SUPABASE_KEY=your_supabase_anon_key
 MQTT_HOST=your_hivemq_host
 MQTT_USER=your_hivemq_username
 MQTT_PASS=your_hivemq_password
-HF_REPO_ID=your_hf_username/accsense-models
+HF_REPO_ID=your_hf_username/AcciSense-models
 HF_TOKEN=your_hf_token
 ```
 
