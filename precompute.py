@@ -12,10 +12,10 @@ from core import ACC_THRESHOLD, TEMPERATURE, infer
 
 # EDIT THESE
 CLIPS = {
-    "crash": "clips/crash.mp4",
-    "near_miss": "clips/near_miss.mp4",
-    "normal": "clips/normal.mp4",
-    "night_rain": "clips/night_rain.mp4",
+    "normal": r"accsense-backend\public\normal.mp4",
+    "minor": r"accsense-backend\public\minor.mp4",
+    "moderate": r"accsense-backend\public\moderate.mp4",
+    "major": r"accsense-backend\public\major.mp4",
 }
 W = 3.0   # window length in seconds, set to your training clip length
 S = 1.5   # stride in seconds

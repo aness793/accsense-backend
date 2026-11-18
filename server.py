@@ -24,6 +24,8 @@ MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "20"))
 MAX_VIDEO_SECONDS = int(os.getenv("MAX_VIDEO_SECONDS", "60"))
 
 # ---------------- SUPABASE ----------------
+
+
 supabase = None
 _url, _key = os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY")
 if _url and _key:
@@ -269,6 +271,9 @@ def predict(
     model_name: str = Form(...),
     gradcam: bool = Form(False),
 ):
+    # first lines inside predict()
+    if os.getenv("DISABLE_LIVE") == "1":
+     raise ApiError(503, "Live inference is temporarily disabled, use the sample clips.")
     if model_name not in INFER:
         raise ApiError(400, "invalid model selection")
     if not _infer_lock.acquire(blocking=False):
